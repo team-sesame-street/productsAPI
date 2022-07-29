@@ -1,0 +1,23 @@
+{
+  "name": "productsapi",
+  "version": "1.0.0",
+  "description": "Server for products API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/team-sesame-street/productsAPI.git"
+  },
+  "author": "Chris Choi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/team-sesame-street/productsAPI/issues"
+  },
+  "homepage": "https://github.com/team-sesame-street/productsAPI#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "pg": "^8.7.3"
+  }
+}

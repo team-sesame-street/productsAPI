@@ -1,0 +1,18 @@
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "type": { "type": "keyword" },
+        "product_id": { "type": "integer"},
+        "name": { "type": "text" },
+        "slogan": { "type": "text"},
+        "description": { "type": "text"},
+        "category": { "type": "keyword"},
+        "default_price": {"type": "integer"},
+        "features": {"type": "nested"},
+        "styles": {"type": "nested"},
+        "related": {"type": "integer"}
+      }
+    }
+  }
+}
