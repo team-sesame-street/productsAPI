@@ -1,61 +1,52 @@
+DROP DATABASE IF EXISTS productsAPI;
 CREATE DATABASE productsAPI;
 
-\connect productsAPI;
+\c productsapi;
 
-CREATE TABLE products (
-  product_id int NOT_NULL,
-  product_name varchar(255),
-  product_slogan varchar(255),
-  product_description varchar(255),
-  product_category varchar(255),
+CREATE TABLE IF NOT EXISTS products (
+  id int NOT NULL,
+  name varchar,
+  slogan varchar,
+  description varchar,
+  category varchar,
   default_price int,
-  PRIMARY KEY (product_id)
-)
+  PRIMARY KEY (id)
+);
 
-CREATE TABLE features (
-  id int NOT_NULL AUTO_INCREMENT,
-  product_id int NOT_NULL,
-  feature varchar(255),
-  feature_value varchar(255),
-  PRIMARY KEY (id),
-  FOREIGN KEY (product_id) REFERENCES products(product_id)
-)
-
-CREATE TABLE related_products (
-  id int NOT_NULL AUTO_INCREMENT,
-  main_product_id int,
-  related_product_id int,
-  PRIMARY KEY (id),
-  FOREIGN KEY (main_product_id) REFERENCES products(product_id),
-  FOREIGN KEY (related_product_id) REFERENCES products(product_id)
-)
-
-CREATE TABLE styles (
-  style_id int NOT_NULL,
+CREATE TABLE IF NOT EXISTS styles (
+  id int NOT NULL,
   product_id int,
-  style_name varchar(255),
-  original_price int,
+  name varchar,
   sale_price int,
-  style_default? boolean,
-  PRIMARY KEY (style_id),
-  FOREIGN KEY (product_id) REFERENCES products(product_id)
-)
-
-CREATE TABLE photos (
-  id int NOT_NULL AUTO_INCREMENT,
-  style_id int,
-  thumbnail_url varchar(255),
-  photo_url varchar(255),
+  original_price int,
+  default_style boolean,
   PRIMARY KEY (id),
-  FOREIGN KEY (style_id) REFERENCES styles(style_id)
-)
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
 
-CREATE TABLE skus (
-  id int NOT_NULL AUTO_INCREMENT,
-  style_id int,
-  sku_id int,
+CREATE TABLE IF NOT EXISTS skus (
+  id int NOT NULL,
+  styleId int,
+  size varchar,
   quantity int,
-  size varchar(255),
   PRIMARY KEY (id),
-  FOREIGN KEY (style_id) REFERENCES styles(style_id)
+  FOREIGN KEY (styleId) REFERENCES styles(id)
+);
+
+CREATE TABLE IF NOT EXISTS features (
+  id int NOT NULL,
+  product_id int,
+  feature varchar,
+  value varchar,
+  PRIMARY KEY (id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE IF NOT EXISTS photos (
+  id int NOT NULL,
+  styleId int,
+  thumbnail_url varchar,
+  url varchar,
+  PRIMARY KEY (id),
+  FOREIGN KEY (styleId) REFERENCES styles(id)
 )

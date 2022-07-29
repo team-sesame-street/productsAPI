@@ -1,7 +1,8 @@
-DROP DATABASE IF EXISTS productsAPI;
-CREATE DATABASE productsAPI;
-
-\c productsapi;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS styles;
+DROP TABLE IF EXISTS skus;
+DROP TABLE IF EXISTS features;
+DROP TABLE IF EXISTS photos;
 
 CREATE TABLE IF NOT EXISTS products (
   id int NOT NULL,
@@ -12,6 +13,8 @@ CREATE TABLE IF NOT EXISTS products (
   default_price int,
   PRIMARY KEY (id)
 );
+
+\copy products FROM '/Users/un1ty/hr/productsAPI/product.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS styles (
   id int NOT NULL,
@@ -24,6 +27,8 @@ CREATE TABLE IF NOT EXISTS styles (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
+\copy styles FROM '/Users/un1ty/hr/productsAPI-data/styles.csv' DELIMITER ',' CSV HEADER;
+
 CREATE TABLE IF NOT EXISTS skus (
   id int NOT NULL,
   styleId int,
@@ -32,6 +37,8 @@ CREATE TABLE IF NOT EXISTS skus (
   PRIMARY KEY (id),
   FOREIGN KEY (styleId) REFERENCES styles(id)
 );
+
+\copy skus FROM '/Users/un1ty/hr/productsAPI-data/skus.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS features (
   id int NOT NULL,
@@ -42,6 +49,8 @@ CREATE TABLE IF NOT EXISTS features (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
+\copy features FROM '/Users/un1ty/hr/productsAPI-data/features.csv' DELIMITER ',' CSV HEADER;
+
 CREATE TABLE IF NOT EXISTS photos (
   id int NOT NULL,
   styleId int,
@@ -51,8 +60,4 @@ CREATE TABLE IF NOT EXISTS photos (
   FOREIGN KEY (styleId) REFERENCES styles(id)
 )
 
--- \copy products FROM '/Users/un1ty/hr/productsAPI/product.csv' DELIMITER ',' CSV HEADER;
--- \copy styles FROM '/Users/un1ty/hr/productsAPI-data/styles.csv' DELIMITER ',' CSV HEADER;
--- \copy skus FROM '/Users/un1ty/hr/productsAPI-data/skus.csv' DELIMITER ',' CSV HEADER;
--- \copy features FROM '/Users/un1ty/hr/productsAPI-data/features.csv' DELIMITER ',' CSV HEADER;
--- \copy photos FROM '/Users/un1ty/hr/productsAPI-data/photos.csv' DELIMITER ',' CSV HEADER;
+\copy photos FROM '/Users/un1ty/hr/productsAPI-data/photos.csv' DELIMITER ',' CSV HEADER;
