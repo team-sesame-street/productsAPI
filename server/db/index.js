@@ -1,6 +1,8 @@
 const path = require('path');
 
-require("dotenv").config({ path: require('find-config')('.env') });
+require("dotenv").config({ path: path.resolve(__dirname, '../../.env') });
+
+
 const { Pool } = require("pg");
 
 console.log(process.env.DB_ADMIN_USERNAME)

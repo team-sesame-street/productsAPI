@@ -61,3 +61,14 @@ CREATE TABLE IF NOT EXISTS photos (
 )
 
 \copy photos FROM '/Users/un1ty/hr/productsAPI-data/photos.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS related (
+  id int NOT NULL,
+  current_product_id int,
+  related_product_id int,
+  PRIMARY KEY (id),
+  FOREIGN KEY (current_product_id) REFERENCES products(id),
+  FOREIGN KEY (related_product_id) REFERENCES products(id)
+);
+
+\copy related FROM '/Users/un1ty/hr/productsAPI-data/related.csv' DELIMITER ',' CSV HEADER;
