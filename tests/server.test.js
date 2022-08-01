@@ -31,3 +31,23 @@ describe("GET request to products", () => {
     expect(response.body).to.exist;
   })
 });
+
+describe("GET request to products/:product_id", () => {
+  let error, response;
+
+  before( (done) => {
+    request.get('/products/1').end( (err, res) => {
+      error = err, response = res;
+      done();
+    })
+  })
+
+  it("returns status code 200", () => {
+    expect(response.status).to.eql(200);
+  })
+
+  it("returns id attribute of first product", () => {
+    expect(response.body.id).to.eql(1)
+  })
+
+})
