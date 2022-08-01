@@ -12,6 +12,7 @@ app.get('/', (req, res) => {
 app.get('/products', controllers.products)
 app.get('/products/:product_id', controllers.productInfo)
 app.get('/products/:product_id/styles', controllers.productStyles)
+app.get('/products/:product_id/related', controllers.productRelated)
 
 const PORT = process.env.APP_PORT || 3000;
 

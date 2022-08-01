@@ -146,7 +146,6 @@ const productStyles = (req, res) => {
     .catch( (error) => {
       res.status(404).send(error)
     })
-
   // pool.query(`SELECT id AS "style_id", name, original_price, sale_price, default_style AS "default?" FROM styles WHERE product_id=$1`, [product_id])
   //   .then( (response) => {
   //     let obj = {product_id: product_id}
@@ -178,8 +177,17 @@ const productStyles = (req, res) => {
   //   .catch( (error) => console.error(error))
 }
 
+const productRelated = (req, res) => {
+  let product_id = req.params.product_id;
+  pool.query(`SELECT related_product_id FROM related WHERE current_product_id=$1`, [product_id])
+      .then((response) => {
+        res.send(response.rows)
+      })
+}
+
 module.exports = {
   products,
   productInfo,
-  productStyles
+  productStyles,
+  productRelated
 }
