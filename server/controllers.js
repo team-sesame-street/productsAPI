@@ -50,7 +50,10 @@ const productInfo = (req, res) => {
         acc.features.push(singleFeature)
         return acc;
       }, {})
-      res.status(200).send(obj)
+      res.status(200).send(obj);
+    })
+    .catch( (error) => {
+      res.status(404).send(error);
     })
 }
 
@@ -90,11 +93,9 @@ const productStyles = (req, res) => {
           photosArray.push(newObj)
         }
       })
-
-      console.log(photosArray)
+      // console.log(photosArray)
 
       let skusObj = {};
-
       response.rows.forEach( (row) => {
         if (skusObj[row.skus_id] === undefined) {
           skusObj[row.skus_id] = {}
@@ -103,9 +104,7 @@ const productStyles = (req, res) => {
           skusObj[row.skus_id].size = row.size;
         }
       })
-
-      console.log(skusObj)
-
+      // console.log(skusObj)
       let found = [];
       let descs = response.rows.map( (row, index, array) => {
         if (found.indexOf(row.style_id) === -1) {
@@ -141,9 +140,11 @@ const productStyles = (req, res) => {
           }
         }
       })
-
-      console.log(descs)
+      // console.log(descs)
       res.send(descs)
+    })
+    .catch( (error) => {
+      res.status(404).send(error)
     })
 
   // pool.query(`SELECT id AS "style_id", name, original_price, sale_price, default_style AS "default?" FROM styles WHERE product_id=$1`, [product_id])
