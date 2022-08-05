@@ -19,7 +19,7 @@ const productInfo = (req, res) => {
                       'slogan', p.slogan,
                       'description', p.description,
                       'category', p.category,
-                      'default_price', p.default_price,
+                      'default_price', CAST (p.default_price AS text),
                       'features', json_agg(json_build_object(
                                           'feature', f.feature,
                                           'value', f.value)
@@ -43,7 +43,7 @@ const productStyles = (req, res) => {
   pool.query(`SELECT json_build_object(
                       'style_id', s.id,
                       'name', s.name,
-                      'original_price', s.original_price,
+                      'original_price', CAST (s.original_price AS text),
                       'sale_price', s.sale_price,
                       'default?', s.default_style,
                       'photos', json_agg(DISTINCT jsonb_build_object('thumbnail_url', p.thumbnail_url,
