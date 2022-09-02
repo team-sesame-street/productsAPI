@@ -1,29 +1,15 @@
 /* eslint-disable import/extensions */
 const express = require('express');
 const cors = require('cors');
-const redis = require('redis');
 
-const cache = require('./cache.js');
+const { redisClient } = require('./cache.js');
 const helper = require('./helpers.js');
 
 const app = express();
 const PORT = process.env.APP_PORT || 3000;
 
-let redisClient;
-
-(async () => {
-  redisClient = redis.createClient({
-    url: 'redis://:XU0Zc6wb3pt3OyDLxgCVtDxygAC8JXpC@redis-19969.c60.us-west-1-2.ec2.cloud.redislabs.com:19969' });
-
-  redisClient.on("error", (error) => console.error(`Error : ${error}`));
-
-  await redisClient.connect();
-})();
-
-app.use(express.json());
-
 app.use(express.static('../public'));
-
+app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
@@ -39,6 +25,7 @@ app.get('/products', async (req, res) => {
     const cachedData = await redisClient.get(cacheKey);
 
     if (cachedData) {
+      console.log('Returning cached data')
       return res.send(JSON.parse(cachedData));
     }
     const response = await helper.getProducts(page, count);
