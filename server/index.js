@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.json({ info: 'Node.js, Express, and Postgres API' });
+  res.json({ info: 'Atelier E-Commerce API' });
 });
 
 app.get('/products', async (req, res) => {
@@ -25,7 +25,7 @@ app.get('/products', async (req, res) => {
     const cachedData = await redisClient.get(cacheKey);
 
     if (cachedData) {
-      console.log('Returning cached data')
+      console.log('Returning cached data for getProducts')
       return res.send(JSON.parse(cachedData));
     }
     const response = await helper.getProducts(page, count);
@@ -40,10 +40,32 @@ app.get('/products', async (req, res) => {
     res.status(err.statusCode || 500).json({ message: err.message });
   }
 });
-// app.get('/products/:product_id', helpers.productInfo);
+app.get('/products/:product_id', async (req, res) => {
+  try {
+    const { product_id } = req.params;
+
+    const cacheKey = `product_id_${product_id}`;
+    const cachedData = await redisClient.get(cacheKey);
+
+    if (cachedData) {
+      console.log('Returning cached data for getProductID')
+      return res.send(JSON.parse(cachedData));
+    }
+
+    const response = await helper.getProductInfo(product_id);
+    await redisClient.set(cacheKey, JSON.stringify(response), {
+      EX: 300,
+      NX: true,
+    });
+
+    res.status(200).send(response);
+  } catch (err) {
+    console.error(`Error while getting product info: ${err.message}`);
+    res.status(err.statusCode || 500).json({ message: err.message });
+  }
+});
 // app.get('/products/:product_id/styles', helpers.productStyles);
 // app.get('/products/:product_id/related', helpers.productRelated);
-
 
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);

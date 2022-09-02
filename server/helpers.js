@@ -22,31 +22,57 @@ const getProducts = async (page, count) => {
   return response.rows;
 };
 
-const productInfo = (req, res) => {
-  const { product_id } = req.params;
-  pool.query(`SELECT json_build_object(
-                      'id', p.id,
-                      'name', p.name,
-                      'slogan', p.slogan,
-                      'description', p.description,
-                      'category', p.category,
-                      'default_price', CAST (p.default_price AS text),
-                      'features', json_agg(json_build_object(
-                                          'feature', f.feature,
-                                          'value', f.value)
-                                          )
-                      )
-              FROM products p
-              INNER JOIN features f
-              ON p.id = f.product_id
-              WHERE p.id=$1
-              GROUP BY p.id`, [product_id])
-    .then((response) => {
-      res.send(response.rows[0].json_build_object);
-    })
-    .catch((error) => {
-      res.status(404).send(error);
-    });
+const getProductInfo = async (productId) => {
+  const query = {
+    name: 'get-product-info',
+    text: `SELECT json_build_object(
+      'id', p.id,
+      'name', p.name,
+      'slogan', p.slogan,
+      'description', p.description,
+      'category', p.category,
+      'default_price', CAST (p.default_price AS text),
+      'features', json_agg(json_build_object(
+                          'feature', f.feature,
+                          'value', f.value)
+                          )
+      )
+      FROM products p
+      INNER JOIN features f
+      ON p.id = f.product_id
+      WHERE p.id=$1
+      GROUP BY p.id`,
+    values: [productId],
+  };
+
+  const response = await pool.query(query);
+  console.log('response is...', response)
+
+  return response.rows[0].json_build_object;
+
+  // pool.query(`SELECT json_build_object(
+  //                     'id', p.id,
+  //                     'name', p.name,
+  //                     'slogan', p.slogan,
+  //                     'description', p.description,
+  //                     'category', p.category,
+  //                     'default_price', CAST (p.default_price AS text),
+  //                     'features', json_agg(json_build_object(
+  //                                         'feature', f.feature,
+  //                                         'value', f.value)
+  //                                         )
+  //                     )
+  //             FROM products p
+  //             INNER JOIN features f
+  //             ON p.id = f.product_id
+  //             WHERE p.id=$1
+  //             GROUP BY p.id`, [product_id])
+  //   .then((response) => {
+  //     res.send(response.rows[0].json_build_object);
+  //   })
+  //   .catch((error) => {
+  //     res.status(404).send(error);
+  //   });
 };
 
 const productStyles = (req, res) => {
@@ -92,7 +118,7 @@ const productRelated = (req, res) => {
 
 module.exports = {
   getProducts,
-  productInfo,
+  getProductInfo,
   productStyles,
   productRelated,
 };
