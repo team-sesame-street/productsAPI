@@ -18,9 +18,12 @@
   },
   "homepage": "https://github.com/team-sesame-street/productsAPI#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
+    "es6-promisify": "^7.0.0",
     "express": "^4.18.1",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "redis": "^4.3.0"
   },
   "devDependencies": {
     "chai": "^4.3.6",

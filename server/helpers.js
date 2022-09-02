@@ -2,13 +2,24 @@
 /* eslint-disable camelcase */
 const pool = require('./db');
 
-const products = (req, res) => {
-  const page = req.query.page || 1;
-  const count = req.query.count || 5;
+// const products = (req, res) => {
+//   const page = req.query.page || 1;
+//   const count = req.query.count || 5;
 
-  pool.query(`SELECT *, cast(default_price as varchar) FROM products WHERE id BETWEEN $1 AND $2`, [(page * count) - count, page * count])
-    .then((response) => res.status(200).send(response.rows))
-    .catch((error) => res.status(404).send(error));
+//   pool.query(`SELECT *, cast(default_price as varchar) FROM products WHERE id BETWEEN $1 AND $2`, [(page * count) - count, page * count])
+//     .then((response) => res.status(200).send(response.rows))
+//     .catch((error) => res.status(404).send(error));
+// };
+const getProducts = async (page, count) => {
+  const query = {
+    name: 'get-products',
+    text: `SELECT *, cast(default_price as varchar) FROM products WHERE id BETWEEN $1 AND $2`,
+    values: [(page * count) - count, page * count],
+  };
+
+  const response = await pool.query(query);
+
+  return response.rows;
 };
 
 const productInfo = (req, res) => {
@@ -66,7 +77,7 @@ const productStyles = (req, res) => {
       res.send(mapped);
     })
     .catch((error) => {
-      res.send(404).send(error);
+      res.status(404).send(error);
     });
 };
 
@@ -80,7 +91,7 @@ const productRelated = (req, res) => {
 };
 
 module.exports = {
-  products,
+  getProducts,
   productInfo,
   productStyles,
   productRelated,
