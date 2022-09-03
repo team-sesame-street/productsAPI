@@ -46,7 +46,6 @@ const getProductInfo = async (productId) => {
   };
 
   const response = await pool.query(query);
-  console.log('response is...', response)
 
   return response.rows[0].json_build_object;
 
@@ -75,50 +74,91 @@ const getProductInfo = async (productId) => {
   //   });
 };
 
-const productStyles = (req, res) => {
-  const { product_id } = req.params;
-  pool.query(`SELECT json_build_object(
-                      'style_id', s.id,
-                      'name', s.name,
-                      'original_price', CAST (s.original_price AS text),
-                      'sale_price', s.sale_price,
-                      'default?', s.default_style,
-                      'photos', json_agg(DISTINCT jsonb_build_object('thumbnail_url', p.thumbnail_url,
-                      'url', p.url)),
-                      'skus', json_object_agg(skus.id, json_build_object(
-                                              'quantity', skus.quantity,
-                                              'size', skus.size
-                      ))
-                      )
-              FROM styles s
-              LEFT JOIN photos p
-              ON s.id = p.styleid
-              LEFT JOIN skus
-              ON s.id = skus.styleid
-              WHERE s.product_id=$1
-              GROUP BY s.id
-              `, [product_id])
-    .then((response) => {
-      const mapped = response.rows.map((row) => row.json_build_object);
-      res.send(mapped);
-    })
-    .catch((error) => {
-      res.status(404).send(error);
-    });
+const getProductStyles = async (productId) => {
+  console.log('product id style is...', productId)
+  const query = {
+    name: 'get-product-styles',
+    text: `SELECT json_build_object(
+        'style_id', s.id,
+        'name', s.name,
+        'original_price', CAST (s.original_price AS text),
+        'sale_price', s.sale_price,
+        'default?', s.default_style,
+        'photos', json_agg(DISTINCT jsonb_build_object('thumbnail_url', p.thumbnail_url,
+        'url', p.url)),
+        'skus', json_object_agg(skus.id, json_build_object(
+                                'quantity', skus.quantity,
+                                'size', skus.size
+        ))
+        )
+    FROM styles s
+    LEFT JOIN photos p
+    ON s.id = p.styleid
+    LEFT JOIN skus
+    ON s.id = skus.styleid
+    WHERE s.product_id=$1
+    GROUP BY s.id`,
+    values: [productId],
+  };
+
+  //   const response = await pool.query(`SELECT json_build_object(
+  //   'style_id', s.id,
+  //   'name', s.name,
+  //   'original_price', CAST (s.original_price AS text),
+  //   'sale_price', s.sale_price,
+  //   'default?', s.default_style,
+  //   'photos', json_agg(DISTINCT jsonb_build_object('thumbnail_url', p.thumbnail_url,
+  //   'url', p.url)),
+  //   'skus', json_object_agg(skus.id, json_build_object(
+  //                           'quantity', skus.quantity,
+  //                           'size', skus.size
+  //   ))
+  //   )
+  // FROM styles s
+  // LEFT JOIN photos p
+  // ON s.id = p.styleid
+  // LEFT JOIN skus
+  // ON s.id = skus.styleid
+  // WHERE s.product_id=$1
+  // GROUP BY s.id
+  // `, [productId]);
+
+  const response = await pool.query(query);
+  console.log(response)
+  const mapped = response.rows.map((row) => row.json_build_object);
+  console.log('styles response is...', mapped)
+  return mapped;
+
+  // .then((response) => {
+  //   res.send(mapped);
+  // })
+  // .catch((error) => {
+  //   res.status(404).send(error);
+  // });
 };
 
-const productRelated = (req, res) => {
-  const { product_id } = req.params;
-  pool.query(`SELECT array(SELECT related_product_id FROM related WHERE current_product_id=$1)`, [product_id])
-    .then((response) => {
-      res.status(200).send(response.rows[0].array);
-    })
-    .catch((error) => res.status(404).send(error));
+const getProductRelated = async (productId) => {
+  const query = {
+    name: 'get-related-products',
+    text: `SELECT array(SELECT related_product_id FROM related WHERE current_product_id=$1)`,
+    values: [productId],
+  };
+
+  const response = await pool.query(query);
+  console.log('response is...', response)
+
+  return response.rows[0].array;
+
+  // pool.query(`SELECT array(SELECT related_product_id FROM related WHERE current_product_id=$1)`, [product_id])
+  //   .then((response) => {
+  //     res.status(200).send(response.rows[0].array);
+  //   })
+  //   .catch((error) => res.status(404).send(error));
 };
 
 module.exports = {
   getProducts,
   getProductInfo,
-  productStyles,
-  productRelated,
+  getProductStyles,
+  getProductRelated,
 };
